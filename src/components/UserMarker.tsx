@@ -1,20 +1,20 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Image, StyleSheet } from 'react-native';
 import { Marker } from 'react-native-maps';
 
+import { AuthenticationContext } from '../context/AuthenticationContext';
 import User from '../types/user';
 
 interface UserMarkerProps {
   data: User;
-  /** Highlights the marker (e.g. the signed-in user). */
-  isCurrentUser?: boolean;
   /** Called when the marker is tapped. */
   onPress: (user: User) => void;
 }
 
 /**
  * A map marker showing a developer's GitHub avatar — same styling as the
- * reference design.
+ * reference design. The signed-in user (from AuthenticationContext) is ringed
+ * in blue.
  *
  * Two deviations from the reference, both forced by Expo Go on SDK 54:
  *  - On Android under the New Architecture, custom-view markers like this avatar
@@ -24,7 +24,10 @@ interface UserMarkerProps {
  *    callout we report the tap via `onPress` and show details in a UserCard
  *    (a normal view, immune to the bug) that links through to the profile.
  */
-export default function UserMarker({ data: user, isCurrentUser, onPress }: UserMarkerProps) {
+export default function UserMarker({ data: user, onPress }: UserMarkerProps) {
+  const currentUser = useContext(AuthenticationContext)?.value;
+  const isCurrentUser = user.login === currentUser;
+
   return (
     <Marker coordinate={user.coordinates} onPress={() => onPress(user)}>
       <Image

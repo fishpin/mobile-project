@@ -1,47 +1,45 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { AuthenticationContext, AuthenticationContextObject } from './src/context/AuthenticationContext';
 import Routes from './src/routes';
-import { getCurrentUser } from './src/utils/storage';
+import { getFromStorage, removeFromStorage, setInStorage } from './src/services/storage';
 
 export default function App() {
-  // The screen the app should open on. `null` while we read persisted state.
-  // If a user has already signed up we skip Setup and go straight to Main.
-  const [initialRouteName, setInitialRouteName] = useState<string | null>(null);
+  // The logged-in GitHub username (null when signed out).
+  const [username, setUsername] = useState<string | null>(null);
+  // The screen to open on; undefined until we've read persisted auth.
+  const [initialRouteName, setInitialRouteName] = useState<string>();
+
+  const authenticationContextObj: AuthenticationContextObject = {
+    value: username,
+    setValue: (username) => {
+      setUsername(username);
+      if (username) {
+        setInStorage('currentUser', username);
+      } else {
+        removeFromStorage('currentUser');
+      }
+    },
+  };
 
   useEffect(() => {
-    getCurrentUser()
-      .then((user) => setInitialRouteName(user ? 'Main' : 'Setup'))
+    getFromStorage<string>('currentUser')
+      .then((storedUser) => {
+        setUsername(storedUser);
+        setInitialRouteName('Main');
+      })
       .catch(() => setInitialRouteName('Setup'));
   }, []);
 
-  if (!initialRouteName) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" color="#031A62" />
-      </View>
-    );
-  }
-
   return (
-    <GestureHandlerRootView style={styles.flex1}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <Routes initialRouteName={initialRouteName} />
+        <AuthenticationContext.Provider value={authenticationContextObj}>
+          {initialRouteName && <Routes initialRouteName={initialRouteName} />}
+        </AuthenticationContext.Provider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  flex1: {
-    flex: 1,
-  },
-  loading: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-  },
-});

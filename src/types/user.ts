@@ -9,7 +9,7 @@ export default interface User {
   name: string;
   avatar_url: string;
   login: string;
-  company: string | null;
+  company: string;
   bio: string | null;
   coordinates: LatLng;
 }

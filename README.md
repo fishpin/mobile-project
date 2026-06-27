@@ -1,97 +1,57 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# dev finder
 
-# Getting Started
+**dev finder** is a mobile app that helps developers find peers in a geographic area, fostering new projects, knowledge sharing and professional growth.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+Because physical proximity between users matters for that kind of collaboration, you are encouraged to fork this project for your own local area, add your own branding, maybe translate it, and release it to the app stores. Each fork connects to its own backend service, as described in [Backend setup](#backend-setup).
 
-## Step 1: Start Metro
+This is an [Expo](https://expo.dev) project (SDK 54) and runs in the [Expo Go](https://expo.dev/go) app.
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## Installation
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+The app is not released in the app stores. To run it, follow the developer [setup](#setup) below.
 
-```sh
-# Using npm
-npm start
+## Forking and contributing
 
-# OR using Yarn
-yarn start
+### Backend setup
+
+The app reads and writes a collection of developer "users". Each fork points at its own backend. You configure the address in one place: the `baseURL` in [`src/services/users.ts`](src/services/users.ts).
+
+There are two ways to provide a backend.
+
+#### Hosted mock (my-json-server)
+
+By default the `baseURL` points at a hosted mock of this repo's `db.json`:
+
+```
+https://my-json-server.typicode.com/<your-github-username>/<your-github-repo>/
 ```
 
-## Step 2: Build and run your app
+This needs no local server. Your repo must be public and `db.json` must live at the repo root. Note that my-json-server only simulates writes: sign-up (POST) and logout (DELETE) return success but are not saved, so a newly registered user will not show up in the list. The seeded users from `db.json` always do.
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+#### Local server (json-server)
 
-### Android
+For full persistence during development, run json-server against `db.json` and point `baseURL` at your machine's LAN IP:
 
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+```
+npx json-server --watch db.json --port 3333 --host <your_ip_address>
 ```
 
-### iOS
+Then set the `baseURL` in [`src/services/users.ts`](src/services/users.ts):
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
+```ts
+baseURL: 'http://<your_ip_address>:3333',
 ```
 
-Then, and every time you update your native dependencies, run:
+### Setup
 
-```sh
-bundle exec pod install
-```
+1. Clone this repository.
+2. Install dependencies with `npm install`.
+3. Set up a backend (see [Backend setup](#backend-setup)).
+4. Start the dev server with `npx expo start`.
+5. Open the app in Expo Go by scanning the QR code.
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+Note: the map needs native map support, so run the app on a phone or emulator through Expo Go. It does not render in a web browser.
 
-```sh
-# Using npm
-npm run ios
+## Support
 
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+If you run into a problem, please search the [open issues](https://github.com/fishpin/mobile-project/issues) first. If it is not already there, feel free to open a new one.
