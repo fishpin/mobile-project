@@ -1,3 +1,7 @@
+// react-native-gesture-handler must be the first import in the entry file
+// (required by @react-navigation/stack).
+import 'react-native-gesture-handler';
+
 import { registerRootComponent } from 'expo';
 
 import App from './App';
