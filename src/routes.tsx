@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 
 import Main from './pages/Main';
+import Profile from './pages/Profile';
 import Setup from './pages/Setup';
 
 const { Navigator, Screen } = createStackNavigator();
@@ -23,7 +24,7 @@ export default function Routes({ initialRouteName }: RoutesProps) {
       >
         <Screen name="Setup" component={Setup} options={{ headerShown: false }} />
         <Screen name="Main" component={Main} options={{ headerShown: false }} />
-        {/* Profile screen is added in Step 3. */}
+        <Screen name="Profile" component={Profile} options={{ title: 'Github Profile' }} />
       </Navigator>
     </NavigationContainer>
   );
