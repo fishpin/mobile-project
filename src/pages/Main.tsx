@@ -59,7 +59,7 @@ export default function Main({ navigation }: StackScreenProps<any>) {
     if (locations.length === 0) return;
 
     mapViewRef.current?.fitToCoordinates(locations, {
-      edgePadding: { top: 180, right: 80, bottom: 80, left: 80 },
+      edgePadding: { top: 128, right: 64, bottom: 64, left: 64 },
       animated: true,
     });
   }

@@ -1,12 +1,12 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { WebView } from 'react-native-webview';
 
 /**
- * TEMPORARY PLACEHOLDER — the real screen (a WebView wrapping the user's GitHub
- * profile page) is built in Step 3. Exists now so the "tap a tooltip" flow from
- * the map navigates somewhere instead of crashing.
+ * Wraps the developer's public GitHub profile page in a WebView. The username
+ * is passed via navigation params from the map's info card.
  */
 export default function Profile({ route }: StackScreenProps<any, any>) {
   const { githubUsername } = route.params as { githubUsername: string };
@@ -14,8 +14,16 @@ export default function Profile({ route }: StackScreenProps<any, any>) {
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
-      <Text style={styles.title}>@{githubUsername}</Text>
-      <Text style={styles.subtitle}>The embedded GitHub profile is coming in Step 3.</Text>
+      <WebView
+        style={styles.webview}
+        source={{ uri: `https://github.com/${githubUsername}` }}
+        startInLoadingState
+        renderLoading={() => (
+          <View style={styles.loading}>
+            <ActivityIndicator size="large" color="#031A62" />
+          </View>
+        )}
+      />
     </View>
   );
 }
@@ -23,20 +31,18 @@ export default function Profile({ route }: StackScreenProps<any, any>) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  webview: {
+    flex: 1,
+  },
+  loading: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 24,
     backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#031A62',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
   },
 });

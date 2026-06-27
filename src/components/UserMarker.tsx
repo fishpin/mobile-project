@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 import { Marker } from 'react-native-maps';
 
 import User from '../types/user';
@@ -13,50 +13,36 @@ interface UserMarkerProps {
 }
 
 /**
- * A map marker showing a developer's GitHub avatar, matching the reference design.
+ * A map marker showing a developer's GitHub avatar — same styling as the
+ * reference design.
  *
- * NOTE: On Android under the New Architecture (which Expo Go forces on for
- * SDK 54), custom-view markers like this avatar render clipped to a partial
- * circle — an open, unfixed react-native-maps bug (#5877). We keep the avatar to
- * honour the intended design, but the map's Callout is unusable for the same
- * reason, so tapping a marker opens a UserCard (a normal view, immune to the
- * bug) with the details and a button through to the GitHub profile.
+ * Two deviations from the reference, both forced by Expo Go on SDK 54:
+ *  - On Android under the New Architecture, custom-view markers like this avatar
+ *    render clipped to a partial circle (open react-native-maps bug #5877). We
+ *    keep the avatar to honour the intended design.
+ *  - The map's `<Callout>` is broken for the same reason, so instead of a
+ *    callout we report the tap via `onPress` and show details in a UserCard
+ *    (a normal view, immune to the bug) that links through to the profile.
  */
 export default function UserMarker({ data: user, isCurrentUser, onPress }: UserMarkerProps) {
   return (
-    <Marker
-      coordinate={user.coordinates}
-      anchor={{ x: 0.5, y: 0.5 }}
-      tracksViewChanges
-      onPress={() => onPress(user)}
-    >
-      <View collapsable={false} style={styles.markerContainer}>
-        <Image
-          style={[styles.avatar, isCurrentUser && styles.currentUser]}
-          source={{ uri: user.avatar_url }}
-        />
-      </View>
+    <Marker coordinate={user.coordinates} onPress={() => onPress(user)}>
+      <Image
+        style={[styles.avatar, isCurrentUser && styles.currentUser]}
+        source={{ uri: user.avatar_url }}
+        resizeMode="contain"
+      />
     </Marker>
   );
 }
 
-const MARKER_SIZE = 76;
-const AVATAR_SIZE = 64;
-
 const styles = StyleSheet.create({
-  markerContainer: {
-    width: MARKER_SIZE,
-    height: MARKER_SIZE,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   avatar: {
-    width: AVATAR_SIZE,
-    height: AVATAR_SIZE,
+    width: 64,
+    height: 64,
     borderWidth: 4,
     borderColor: '#E8EAED',
-    borderRadius: AVATAR_SIZE / 2,
-    backgroundColor: '#E8EAED',
+    borderRadius: 32,
   },
   currentUser: {
     borderColor: '#4285F4',

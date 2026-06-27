@@ -18,8 +18,11 @@ export default function Routes({ initialRouteName }: RoutesProps) {
       <Navigator
         initialRouteName={initialRouteName}
         screenOptions={{
+          headerMode: 'screen',
           headerTintColor: 'white',
           headerStyle: { backgroundColor: '#021A62' },
+          // v7 replacement for the reference's `headerBackTitleVisible: false`.
+          headerBackButtonDisplayMode: 'minimal',
         }}
       >
         <Screen name="Setup" component={Setup} options={{ headerShown: false }} />
